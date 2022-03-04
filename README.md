@@ -2,7 +2,8 @@
 
 DoDoMu is a Mobile Application which helps refugees with intermediate helps and final settlement. It connects helpers and refugees fast and efficient.  
 
-Please refer to more detailed information in the wiki: https://github.com/shahparseidel/DoDoMu/wiki also check the Issue List for new tasks: https://github.com/shahparseidel/DoDoMu/issues
+- Please refer to more detailed information in the wiki: https://github.com/shahparseidel/DoDoMu/wiki 
+- Also check the Issue List for new tasks: https://github.com/shahparseidel/DoDoMu/issues
 
 ## Description
 
