@@ -39,10 +39,10 @@ export default class UserSettings extends Component {
     const howtocontactfield = howtocontactlst.map((item)  => ( 
         <option>{item}</option>
     ));
-    const personcntlst = ["0","1","2","3",">3"];
+    /* const personcntlst = ["0","1","2","3",">3"];
     const personcntfield = personcntlst.map((item)  => ( 
         <option>{item}</option>
-    ));
+    )); */
 
     const categorylst = ["Housing","Food","Auto"];
     const categoryfield = categorylst.map((item)  => ( 
@@ -65,11 +65,10 @@ export default class UserSettings extends Component {
         <ModalBody>
             Email/Username: hello@kitty.com            
           <Form>
-          <FormGroup row>
-              <Label  for="settings-fullname" size="sm" sm={3}>Full Name</Label>
-              <Col sm={9}>
+          <FormGroup >
+              <Label  for="settings-fullname"  >Full Name</Label>
+
               <Input
-                bsSize="sm" 
                 type="text"
                 id="settings-fullname"
                 name="fullname"
@@ -77,12 +76,12 @@ export default class UserSettings extends Component {
                 onChange={this.handleChange}
                 placeholder="Full Name"
               />
-              </Col>
+
             </FormGroup>
-            <FormGroup row>
-              <Label for="settings-phone" size="sm" sm={4}>Phone Number</Label>
-              <Col sm={8}><Input
-                bsSize="sm" 
+            <FormGroup >
+              <Label for="settings-phone" >Phone Number</Label>
+<Input
+
                 type="text"
                 id="settings-phone"
                 name="phone"
@@ -90,7 +89,7 @@ export default class UserSettings extends Component {
                 onChange={this.handleChange}
                 placeholder="Phone Number"
               />
-              </Col>
+
             </FormGroup>
             <FormGroup>
               <Label for="settings-messenger">Messenger</Label>
@@ -106,7 +105,7 @@ export default class UserSettings extends Component {
                 </Input>
             </FormGroup>
 
-          <Label for="settings-needsoffers">Areas of Needs</Label>
+{/*           <Label for="settings-needsoffers">Areas of Needs</Label>
             {categoryfield}
             <FormGroup>
               <Label for="settings-location">Location</Label>
@@ -119,8 +118,8 @@ export default class UserSettings extends Component {
                 onChange={this.handleChange}
                 placeholder="Where are you right now"
               />
-            </FormGroup>
-            <FormGroup>
+            </FormGroup> */}
+            {/* <FormGroup>
               <Label for="settings-adultcnt">Number of adults with me</Label>
               <Input
                 bsSize="sm" 
@@ -133,8 +132,8 @@ export default class UserSettings extends Component {
               >
                   {personcntfield}
                 </Input>
-                </FormGroup>
-            <FormGroup>
+                </FormGroup> */}
+            {/* <FormGroup>
               <Label for="settings-childcnt">Number of childs with me</Label>
               <Input
                 bsSize="sm" 
@@ -147,7 +146,7 @@ export default class UserSettings extends Component {
               >
                                 {personcntfield}
                 </Input>
-            </FormGroup>
+            </FormGroup> */}
             <FormGroup>
               <Label for="settings-details">Details about you</Label>
               <Input

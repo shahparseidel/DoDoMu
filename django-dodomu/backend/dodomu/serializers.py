@@ -11,5 +11,5 @@ class dodomuSerializer(serializers.ModelSerializer):
 class OffersAndRequestsSerializer(serializers.ModelSerializer):
     class Meta:
         model = OffersAndRequests
-        fields = ('id','category', 'description','location','maxrange','pickupordelivery','urgency','state')
+        fields = ('id','category', 'category2','description','location','maxrange','pickupordelivery','urgency','state')
         #fields = '__all__'

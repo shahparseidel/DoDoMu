@@ -6,29 +6,34 @@ import AckOfferRequestHelp from "./components/HelpAck";
 import NotificationFeed from "./components/NotificationFeed";
 import OpenitemList from "./components/OpenitemList";
 import UsefulLinks from "./components/UsefulLinks";
+import LoginPage from './components/LoginPage';
 import axios from "axios";
 
 const cst_NO_MODAL = 0;
 const cst_EDIT_PROFILE_MODAL = 1;
 const cst_HELP_MODAL = 2;
 const cst_HELP_ACK_MODAL = 3;
+const cst_LOGIN_MODAL = 4;
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       viewCompleted: true,
-      activeview: 'note',
-      needhelp: false,
+      activeview: 'notifications',
+      needhelp: true,
+      token: "",
       geo_loc: "Locationg...",
-      screenview: "provide",
       NoteFeed: [],
-      modalview: cst_NO_MODAL,
+      OpenitemLst: [],
+      modalview: cst_LOGIN_MODAL,
+      loggedin: false,
       activeItem: {
         category: "Food", 
+        category2: "Food2", 
         description: "Test", 
         location : "Test", 
-        maxrange: '1', 
+        maxrange: '1',         
         pickupordelivery: '0', 
         urgency: "1",
         state: '0'
@@ -38,7 +43,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.OfferRequestrefreshList();
+    if (!this.state.loggedin)  this.setState({ modal: cst_LOGIN_MODAL });
+    this.refreshviews();
     navigator.geolocation.getCurrentPosition(function(position) {
       console.log("Latitude is :", position.coords.latitude);
       console.log("Longitude is :", position.coords.longitude);
@@ -47,17 +53,44 @@ class App extends Component {
     });
   }
 
-  OfferRequestrefreshList = () => {
+  toggle = () => {
+    this.setState({ modal: cst_NO_MODAL });
+  };
+
+ // Download the Notification Feed from the server in the background and store feed in NoteFeed
+ refreshNotificationFeed = () => {
     axios
       .get("./api/offersandrequests/")
       .then((res) => this.setState({ NoteFeed: res.data }))
       .catch((err) => console.log(err));
-  };
+  }; 
+  // Download the Open Item list from the server in the background and store feed in OpenitemLst
+  refreshOpenitemLst= () => {
+    axios
+      .get("./api/offersandrequests/")
+      .then((res) => this.setState({ OpenitemLst: res.data }))
+      .catch((err) => console.log(err));
+  }; 
+  // Refresh All Views in the system (on bootup and when new items were added)
+  refreshviews = () => {
+    this.refreshNotificationFeed();
+    this.refreshOpenitemLst();
+    console.log('Refresh-App.js');
+  }
 
+  updatetoken = (token) => {
+    this.state.token = token;
+    console.log(this.state.token);
+  }
 
-  toggle = () => {
-    this.setState({ modal: cst_NO_MODAL });
-  };
+  handleLoginSave = (item) => {
+    console.log(item);
+    axios
+    .post("./dj-rest-auth/login/", item)
+    .then((res) => this.updatetoken(res.data.key))
+    .catch((err) => console.log(err));
+
+  }
 
   handleOfferRequestSubmit = (item) => {
     this.toggle();
@@ -65,12 +98,14 @@ class App extends Component {
     if (item.id) {
       axios
         .put(`/api/offersandrequests/${item.id}/`, item)
-        .then((res) => this.OfferRequestrefreshList());
+        .then((res) => this.refreshviews())
+        .catch((err) => console.log(err));
       return;
     }
     axios
       .post("/api/offersandrequests/", item)
-      .then((res) => this.OfferRequestrefreshList());
+      .then((res) => this.refreshviews())
+      .catch((err) => console.log(err));
 
   };
 
@@ -88,14 +123,24 @@ class App extends Component {
 
   }; */
 
-  handleDelete = (item) => {
-    axios
-    .delete(`/api/dodomus/${item.id}/`)
-    .then((res) => this.refreshList());
+
+ 
+  createRequestOffer = () => {
+
+
+    const item = { helprequest: false, category: "Food", category: "Food2", description: "Test", location : "Test", maxrange: '1', pickupordelivery: '0', urgency: "1",state: '0'};
+    this.setState({ activeItem: item,  modal: cst_HELP_MODAL });
   };
 
-  createHelp = () => {
-    const item = { category: "Food", description: "Test", location : "Test", maxrange: '1', pickupordelivery: '0', urgency: "1",state: '0'};
+
+  deleteOfferRequest = (item) => {
+    axios
+    .delete(`/api/offersandrequests/${item.id}/`)
+    .then((res) => this.refreshviews());
+  }
+
+  editOfferRequest = (item) => {
+    //const item = { category: "Food", description: "Test", location : "Test", maxrange: '1', pickupordelivery: '0', urgency: "1",state: '0'};
     this.setState({ activeItem: item, modal: cst_HELP_MODAL });
   };
 
@@ -109,7 +154,6 @@ class App extends Component {
     const item = { title: "", description: "", completed: false };
     this.setState({ activeItem: item, modal: cst_EDIT_PROFILE_MODAL});
   };
-
 
   editItem = (item) => {
     this.setState({ activeItem: item, modal: !this.state.modal });
@@ -143,46 +187,49 @@ class App extends Component {
   }; */
 
 
-  swmitemsfeed = () => {
-    this.setState({activeview: 'items'});
-  }
-
-  swnotefeed = () => {
-   this.setState({activeview: 'note'});
-  }
-  swusefullinkfeed = () => {
-    this.setState({activeview: 'usefullinks'});
-   }
+ 
   
-  renderitemfeed = () => {
-      return (
-        <p>ItemFeed</p>
-      );
-  }
+ 
 
 
   rendernotefeed = () => {
     return (
       <NotificationFeed
+      NoteFeed = {this.state.NoteFeed}
       ackOfferRequest={this.ackOfferRequest}
     />
       );
   }
-
+  renderopenitemfeed = () => {
+    return (
+      <OpenitemList
+      OpenitemLst = {this.state.OpenitemLst}
+      editOfferRequest={this.editOfferRequest}
+      deleteOfferRequest={this.deleteOfferRequest}
+    />
+    );
+  }
   renderusefullinksfeed = () => {
     return (
       <UsefulLinks
       editProfile={this.editProfile}
       />
       );    
-}
-
+  }
+  swnotefeed = () => {
+    this.setState({activeview: 'notifications'});
+  }
+  swmitemsfeed = () => {
+  this.setState({activeview: 'openitemlist'});
+  }
+  swusefullinkfeed = () => {
+    this.setState({activeview: 'usefullinks'});
+  }
   renderfeed = () => {
-    if (this.state.activeview === 'note') return(this.rendernotefeed());
-    if (this.state.activeview === 'items') return(this.renderitemfeed());
+    if (this.state.activeview === 'notifications') return(this.rendernotefeed());
+    if (this.state.activeview === 'openitemlist') return(this.renderopenitemfeed());
     if (this.state.activeview === 'usefullinks') return(this.renderusefullinksfeed());
   }
-
   renderHelpBt = () => {
     if (this.state.needhelp === true)
     return(
@@ -235,8 +282,6 @@ class App extends Component {
   };
 
 
-  
-
   render() {
   
     return (
@@ -250,7 +295,7 @@ class App extends Component {
                 <button 
                    className="btn btn-primary btn-sm"
                   onClick={this.swnotefeed}>
-                Notifications
+                Note Feed
                 </button>
                 </td>
                 <td>
@@ -263,10 +308,12 @@ class App extends Component {
                 <td>
                 <button
                    className="btn btn-outline-danger btn-sm"
-                    onClick={this.createHelp}>
+                    onClick={this.createRequestOffer}
+                    >
                     {this.renderHelpBt()}
                 </button>
                 </td>
+
                 <td>
                 <button
                    class="btn btn-primary btn-sm"
@@ -295,6 +342,12 @@ class App extends Component {
             </div>
           </div>
         </div>
+        {(this.state.modal === cst_LOGIN_MODAL) ? (
+          <LoginPage
+            toggle={this.toggle}
+            onSave={this.handleLoginSave}
+          />
+        ) : null}
         {(this.state.modal === cst_HELP_MODAL) ? (
           <OfferRequestHelp
             activeItem={this.state.activeItem}

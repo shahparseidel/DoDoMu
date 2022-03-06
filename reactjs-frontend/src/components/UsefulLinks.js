@@ -20,6 +20,7 @@ export default class UsefulLinks extends Component {
 
 render() {
     const { editProfile } = this.props;
+
     return (
         <div>
         <li className="list-group-item d-flex justify-content-between align-items-left" >

@@ -1,88 +1,46 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from "reactstrap";
+import axios from "axios";
+
 
 export default class OpenitemList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeItem: this.props.activeItem,
+    
     };
   }
 
-  handleChange = (e) => {
-    let { name, value } = e.target;
-
-    if (e.target.type === "checkbox") {
-      value = e.target.checked;
-    }
-
-    const activeItem = { ...this.state.activeItem, [name]: value };
-
-    this.setState({ activeItem });
-  };
-
-  render() {
-    const { toggle, onSave } = this.props;
-
-    return (
-      <Modal isOpen={true} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Accept Offer or Request</ModalHeader>
-        <ModalBody>
-          <Form>
-            <FormGroup>
-              <Label for="todo-title">Title</Label>
-              <Input
-                type="text"
-                id="todo-title"
-                name="title"
-                value={this.state.activeItem.title}
-                onChange={this.handleChange}
-                placeholder="Enter Todo Title"
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="todo-description">Description</Label>
-              <Input
-                type="text"
-                id="todo-description"
-                name="description"
-                value={this.state.activeItem.description}
-                onChange={this.handleChange}
-                placeholder="Enter Todo description"
-              />
-            </FormGroup>
-            <FormGroup check>
-              <Label check>
-                <Input
-                  type="checkbox"
-                  name="completed"
-                  checked={this.state.activeItem.completed}
-                  onChange={this.handleChange}
-                />
-                Completed
-              </Label>
-            </FormGroup>
-          </Form>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color="success"
-            onClick={() => onSave(this.state.activeItem)}
-          >
-            Save
-          </Button>
-        </ModalFooter>
-      </Modal>
-    );
+  componentDidMount() {
+    console.log('OpenitemlstMount')
   }
+// 
+render() {
+    const theItems = this.props.OpenitemLst;
+    const { editOfferRequest, deleteOfferRequest} = this.props;
+    return theItems.map((item) => (
+      <li  key={item.id} 
+      className="list-group-item d-flex m-0 p-0  justify-content-between align-items-center">
+      <span className="col-2">{item.category}</span>
+      <span className="col-7 text-sm-left"><span class="font-italic">{item.category2}: </span>{item.description}</span>
+      <button className="col-1"
+            className="btn btn-primary disabled" disabled
+            onClick={() => this.reviewresp(item)}
+          >R</button>
+                <button className="col-1"
+            className="btn btn-secondary"
+            onClick={() => editOfferRequest(item)}
+          >E</button>
+                <button className="col-1"
+            className="btn btn-danger"
+            onClick={() => deleteOfferRequest(item)}
+          >D</button>
+
+
+        </li>
+      ));    
+  }
+
+
 }
+
+ 

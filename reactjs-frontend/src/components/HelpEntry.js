@@ -38,14 +38,18 @@ export default class OfferRequestHelp extends Component {
 
     const maxwidthlst = ["500m","1km","2km","5km","10km","20km","50km"]
     const categorylst = ["Housing","Food","Auto"];
+    const subcategorylst = ["Sub1","Sub2","Sub3"];
     const urgencylst = ['As soon as possible','today','this week'];
     const pickupordeliverylst = ['Please Pickup the Item or Service','I can deliver the Item or Service'];
 
     const categoryfield = categorylst.map((item)  => ( 
       <option>{item}</option>
     ));
-    const urgencyfield = urgencylst.map((item)  => ( 
+    const subcategoryfield = subcategorylst.map((item)  => ( 
       <option>{item}</option>
+    ));
+    const urgencyfield = urgencylst.map((item)  => ( 
+      <option value={urgencylst.indexOf(item)}>{item}</option>
     ));
     const maxwidthfield = maxwidthlst.map((item) => (
       <option value={maxwidthlst.indexOf(item)}>{item}</option>
@@ -113,10 +117,11 @@ export default class OfferRequestHelp extends Component {
                 type="select"
                 id="help-category2"
                 name="category2"
+                value={this.state.activeItem.category2} 
                 //value={this.state.activeItem.category} 
-                //onChange={this.handleChange}
-                placeholder="Set Category">  
-                {categoryfield}           
+                onChange={this.handleChange}
+                placeholder="Set Category2">  
+                {subcategoryfield}           
               </Input>
             </FormGroup>
             <FormGroup>
