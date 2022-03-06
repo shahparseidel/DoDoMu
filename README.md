@@ -2,6 +2,9 @@
 
 DoDoMu is a Mobile Application which helps refugees with intermediate helps and final settlement. It connects helpers and refugees fast and efficient.  
 
+- Please refer to more detailed information in the wiki: https://github.com/shahparseidel/DoDoMu/wiki 
+- Also check the Issue List for new tasks: https://github.com/shahparseidel/DoDoMu/issues
+
 ## Description
 
 The App would connect refugees to the local individuals and organizations who could be a dedicated sponsor or a service provider for any sort of help like providing food, home, transport, therapist, medication, child care, cloth, education, …..
@@ -10,7 +13,7 @@ The App would connect refugees to the local individuals and organizations who co
 
 - Django for Backend 
 - React Bootstrap for Frontend
--Native App development later
+- Native App development later
 
 ## Usage
 
