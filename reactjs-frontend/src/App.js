@@ -44,7 +44,7 @@ class App extends Component {
 
   componentDidMount() {
     if (!this.state.loggedin)  this.setState({ modal: cst_LOGIN_MODAL });
-    this.refreshviews();
+    
     navigator.geolocation.getCurrentPosition(function(position) {
       console.log("Latitude is :", position.coords.latitude);
       console.log("Longitude is :", position.coords.longitude);
@@ -59,15 +59,25 @@ class App extends Component {
 
  // Download the Notification Feed from the server in the background and store feed in NoteFeed
  refreshNotificationFeed = () => {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Token '+this.state.token,
+  }
     axios
-      .get("./api/offersandrequests/")
+      .get("http://127.0.0.1:3000/api/offersandrequests/",{headers: headers
+    })
       .then((res) => this.setState({ NoteFeed: res.data }))
       .catch((err) => console.log(err));
   }; 
   // Download the Open Item list from the server in the background and store feed in OpenitemLst
   refreshOpenitemLst= () => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '+this.state.token,
+    }
     axios
-      .get("./api/offersandrequests/")
+      .get("http://127.0.0.1:3000/api/offersandrequests/", {headers: headers
+    })
       .then((res) => this.setState({ OpenitemLst: res.data }))
       .catch((err) => console.log(err));
   }; 
@@ -81,34 +91,39 @@ class App extends Component {
   updatetoken = (token) => {
     this.state.token = token;
     console.log(this.state.token);
+    this.refreshviews();
+    this.toggle();
   }
 
   handleLoginSave = (item) => {
   
-    const headers = {
+  /*   const headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Token '+this.state.token,
-    }
-    console.log(item,headers);
+    } */
+
     axios
-    .post("http://127.0.0.1:3000/dj-rest-auth/login/", item, {headers: headers
-    })
+    .post("http://127.0.0.1:3000/dj-rest-auth/login/", item)
     .then((res) => this.updatetoken(res.data.key))
     .catch((err) => console.log(err));
   }
 
   handleOfferRequestSubmit = (item) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '+this.state.token,
+    }
     this.toggle();
     console.log(item)
     if (item.id) {
       axios
-        .put(`/api/offersandrequests/${item.id}/`, item)
+        .put(`http://127.0.0.1:3000/api/offersandrequests/${item.id}/`, item, {headers : headers})
         .then((res) => this.refreshviews())
         .catch((err) => console.log(err));
       return;
     }
     axios
-      .post("/api/offersandrequests/", item)
+      .post("http://127.0.0.1:3000//api/offersandrequests/", item, {headers : headers})
       .then((res) => this.refreshviews())
       .catch((err) => console.log(err));
 
@@ -140,7 +155,7 @@ class App extends Component {
 
   deleteOfferRequest = (item) => {
     axios
-    .delete(`/api/offersandrequests/${item.id}/`)
+    .delete(`http://127.0.0.1:3000/api/offersandrequests/${item.id}/`)
     .then((res) => this.refreshviews());
   }
 

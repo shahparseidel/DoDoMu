@@ -19,7 +19,6 @@ from rest_framework import routers
 from dodomu import views
 
 router = routers.DefaultRouter()
-router.register(r'dodomus', views.dodomuView, 'dodomu')
 router.register(r'offersandrequests', views.OffersAndRequestsView, 'dodomu')
 
 urlpatterns = [
