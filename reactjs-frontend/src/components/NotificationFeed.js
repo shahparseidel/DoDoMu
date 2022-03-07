@@ -13,18 +13,6 @@ export default class NotificationFeed extends Component {
 
   }
 
- 
-
-
-
-
-
-/*   <button
-  class="btn btn-primary btn-sm"
-  onClick={() => editProfile()}                   
-  >Edit Profile
-</button> */
-
 
 urgencyview = (item) => {
   const urgencylst = ['As soon as possible','today','this week'];
@@ -71,27 +59,5 @@ render() {
 
 
 }
-
-
-/* rendernotefeed2= () => {
-  const theItems = this.state.NoteFeed;
-  return theItems.map((item) => (
-    <li  key={item.id}
-    className="list-group-item d-flex justify-content-between align-items-center">
-    <span>
-      {item.category}
-      {item.description}
-      {item.location}        
-    </span>
-    <span><button
-          className="btn btn-danger"
-          onClick={() => this.handleDelete(item)}
-        >
-          Accept
-        </button></span>
-        <span class="badge badge-secondary badge-pill">{item.id}km</span>
-      </li>
-    ));    
-} */
 
 

@@ -84,12 +84,17 @@ class App extends Component {
   }
 
   handleLoginSave = (item) => {
-    console.log(item);
+  
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '+this.state.token,
+    }
+    console.log(item,headers);
     axios
-    .post("./dj-rest-auth/login/", item)
+    .post("http://127.0.0.1:3000/dj-rest-auth/login/", item, {headers: headers
+    })
     .then((res) => this.updatetoken(res.data.key))
     .catch((err) => console.log(err));
-
   }
 
   handleOfferRequestSubmit = (item) => {
