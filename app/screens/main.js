@@ -1,9 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { TouchableOpacity, View, Text } from "react-native";
-import GiveHelp from "../components/give-help";
-import Refugee from "../components/refugee";
-import { globalStyles } from "../styles/globalStyles";
+import { View, StyleSheet } from "react-native";
+import { Button } from "../components";
+import GiveHelp from "./giveHelp";
+import Refugee from "./refugee";
 
 const Stack = createNativeStackNavigator();
 export default function Main() {
@@ -30,21 +30,25 @@ export default function Main() {
   );
 }
 
-function RootNavigation({ navigation }: any) {
+function RootNavigation({ navigation }) {
   return (
-    <View style={globalStyles.container}>
-      <TouchableOpacity
-        style={globalStyles.touchableButton}
+    <View style={styles.container}>
+      <Button
         onPress={() => navigation.navigate("Refugee")}
-      >
-        <Text style={globalStyles.text}>I'm a refugee from Ukraine</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={globalStyles.touchableButton}
+        title="I am refugee from Ukraine"
+      />
+      <Button
         onPress={() => navigation.navigate("GiveHelp")}
-      >
-        <Text style={globalStyles.text}>I'm here to help</Text>
-      </TouchableOpacity>
+        title="I'm here to help"
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
