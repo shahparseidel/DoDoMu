@@ -34,25 +34,35 @@ deliverypickup = (pickupordeliveryitem, maxrangeitem) => {
   }
 }
  
+acceptbut_render = (item) => {
+  const {  ackOfferRequest} = this.props;
+  if (item.state===0) {
+    return (
+    <button className="col-1 text-sm-left btn btn-success"
+    onClick={() => ackOfferRequest(item.id)}
+  >A</button>
+    )
+  }
+  
+
+}
+
 render() {
     const theItems = this.props.NoteFeed;
-    const {  ackOfferRequest} = this.props;
+
     return theItems.map((item) => (
       <li  key={item.id}
       className="list-group-item d-flex justify-content-between align-items-center">
       <span className="col-11">
-        <div class="font-weight-bold">{item.category} - {item.category2} @ Shahpar Seidel</div>
+        <div class="font-weight-bold">{item.category} - {item.category2} - UserID: {item.user_id} AckUserID: {item.ackuserid} State: {item.state}</div>
         <div className="badge badge-primary badge-pill col-3">{item.id}km</div>
         <div>{item.description}</div>
         <div>-</div>
         <div>{this.urgencyview(item.urgency)}</div>
         {this.deliverypickup(item.pickupordelivery,item.maxrange)}        
 </span>
+      {this.acceptbut_render(item)}
 
-                <button className="col-1 text-sm-left"
-            className="btn btn-success"
-            onClick={() => ackOfferRequest(item)}
-          >A</button>
         </li>
       ));    
   }

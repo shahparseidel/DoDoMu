@@ -98,8 +98,8 @@ export default class OfferRequestHelp extends Component {
     return (
       <Modal isOpen={true} toggle={toggle}>
         <ModalHeader toggle={toggle}>{title}</ModalHeader>
-        <ModalBody>
-          <Form>
+        <ModalBody>          
+          <Form>                 
             <FormGroup>
               <Label for="help-category">Category</Label>
               <Input

@@ -20,9 +20,14 @@ from dodomu import views
 
 router = routers.DefaultRouter()
 router.register(r'offersandrequests', views.OffersAndRequestsView, 'dodomu')
+router.register(r'openitemlists', views.OpenItemListView, 'dodomu')
+router.register(r'offersandrequestacks', views.OffersAndRequestsAckView, 'dodomu')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
+    path('user/',views.user_data),
+    path('addrequest/',views.addrequest)
 ]

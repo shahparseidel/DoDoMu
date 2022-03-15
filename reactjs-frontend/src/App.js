@@ -22,9 +22,12 @@ class App extends Component {
       viewCompleted: true,
       activeview: 'notifications',
       needhelp: true,
+      username: [],
+      userid: -1,
       token: "",
-      geo_loc: "Locationg...",
+      geo_loc: "Locating...",
       NoteFeed: [],
+      data_feed: [],
       OpenitemLst: [],
       modalview: cst_LOGIN_MODAL,
       loggedin: false,
@@ -44,13 +47,7 @@ class App extends Component {
 
   componentDidMount() {
     if (!this.state.loggedin)  this.setState({ modal: cst_LOGIN_MODAL });
-    
-    navigator.geolocation.getCurrentPosition(function(position) {
-      console.log("Latitude is :", position.coords.latitude);
-      console.log("Longitude is :", position.coords.longitude);
-      console.log(position);
-      // this.state.geo_loc = position.coords.latitude.toString() + ' ' + position.coords.longitude.toString();
-    });
+  
   }
 
   toggle = () => {
@@ -69,6 +66,7 @@ class App extends Component {
       .then((res) => this.setState({ NoteFeed: res.data }))
       .catch((err) => console.log(err));
   }; 
+
   // Download the Open Item list from the server in the background and store feed in OpenitemLst
   refreshOpenitemLst= () => {
     const headers = {
@@ -76,11 +74,12 @@ class App extends Component {
       'Authorization': 'Token '+this.state.token,
     }
     axios
-      .get("http://127.0.0.1:3000/api/offersandrequests/", {headers: headers
+      .get("http://127.0.0.1:3000/api/openitemlists/", {headers: headers
     })
       .then((res) => this.setState({ OpenitemLst: res.data }))
       .catch((err) => console.log(err));
-  }; 
+  };
+
   // Refresh All Views in the system (on bootup and when new items were added)
   refreshviews = () => {
     this.refreshNotificationFeed();
@@ -88,25 +87,84 @@ class App extends Component {
     console.log('Refresh-App.js');
   }
 
+
+  getusername = () => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '+this.state.token,
+    }
+    axios
+      .get("http://127.0.0.1:3000/user/", {headers: headers
+    })
+      .then((res) => this.setState({ userid: res.data.user_id, username: res.data.username }))
+      .catch((err) => console.log(err));
+  }; 
+  
+
+  updategeoposition = (position) => {
+      //console.log(position.coords.longitude);
+      //console.log(position.coords.latitude);
+      console.log(position.coords.latitude.toString() + ' ' + position.coords.longitude.toString());
+      this.setState({'geo_loc' : position.coords.latitude.toString() + ' ' + position.coords.longitude.toString()});
+  }
+
+  errorgeoposition(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+
+  }
+
   updatetoken = (token) => {
+    var options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
     this.state.token = token;
     console.log(this.state.token);
     this.refreshviews();
     this.toggle();
+    this.getusername();
+    navigator.geolocation.getCurrentPosition(this.updategeoposition, this.errorgeoposition, options);
+    
   }
+  
 
   handleLoginSave = (item) => {
-  
-  /*   const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token '+this.state.token,
-    } */
-
     axios
     .post("http://127.0.0.1:3000/dj-rest-auth/login/", item)
     .then((res) => this.updatetoken(res.data.key))
     .catch((err) => console.log(err));
+    
   }
+
+
+  resetOfferRequest = (ackoffitem) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '+this.state.token,
+    }    
+    const thisitem = {'ackuserid' : -1, 'state': 0}
+      axios
+        .put(`http://127.0.0.1:3000/api/offersandrequestacks/${ackoffitem}/`, thisitem, {headers : headers})
+        .then((res) => this.refreshviews())
+        .catch((err) => console.log(err));
+      return;
+
+  };
+
+  ackOfferRequest = (ackoffitem) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '+this.state.token,
+    }    
+    const thisitem = {'ackuserid' : this.state.userid, 'state': 1}
+      axios
+        .put(`http://127.0.0.1:3000/api/offersandrequestacks/${ackoffitem}/`, thisitem, {headers : headers})
+        .then((res) => this.refreshviews())
+        .catch((err) => console.log(err));
+      return;
+
+  };
 
   handleOfferRequestSubmit = (item) => {
     const headers = {
@@ -114,6 +172,8 @@ class App extends Component {
       'Authorization': 'Token '+this.state.token,
     }
     this.toggle();
+    //item.user_id = this.state.user_id;
+    //item.username = this.state.username;
     console.log(item)
     if (item.id) {
       axios
@@ -123,7 +183,7 @@ class App extends Component {
       return;
     }
     axios
-      .post("http://127.0.0.1:3000//api/offersandrequests/", item, {headers : headers})
+      .post("http://127.0.0.1:3000/addrequest/", item, {headers : headers})
       .then((res) => this.refreshviews())
       .catch((err) => console.log(err));
 
@@ -146,16 +206,18 @@ class App extends Component {
 
  
   createRequestOffer = () => {
-
-
-    const item = { helprequest: false, category: "Food", category: "Food2", description: "Test", location : "Test", maxrange: '1', pickupordelivery: '0', urgency: "1",state: '0'};
+    const item = {  helprequest: false, category: "Food", category2: "Food2", description: "Test", location : this.state.geo_loc, maxrange: '1', pickupordelivery: '0', urgency: "1",state: '0'};
     this.setState({ activeItem: item,  modal: cst_HELP_MODAL });
   };
 
 
   deleteOfferRequest = (item) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '+this.state.token,
+    }
     axios
-    .delete(`http://127.0.0.1:3000/api/offersandrequests/${item.id}/`)
+    .delete(`http://127.0.0.1:3000/api/offersandrequests/${item.id}/`, {headers : headers})
     .then((res) => this.refreshviews());
   }
 
@@ -170,10 +232,7 @@ class App extends Component {
     this.setState({ activeItem: item, modal: cst_EDIT_PROFILE_MODAL});
   };
   
-  ackOfferRequest = () => {
-    const item = { title: "", description: "", completed: false };
-    this.setState({ activeItem: item, modal: cst_EDIT_PROFILE_MODAL});
-  };
+
 
   editItem = (item) => {
     this.setState({ activeItem: item, modal: !this.state.modal });
@@ -224,6 +283,7 @@ class App extends Component {
     return (
       <OpenitemList
       OpenitemLst = {this.state.OpenitemLst}
+      resetOfferRequest={this.resetOfferRequest}
       editOfferRequest={this.editOfferRequest}
       deleteOfferRequest={this.deleteOfferRequest}
     />
@@ -350,7 +410,7 @@ class App extends Component {
                 </td>
                 </table>
               </div>
-              <ul className="badge badge-success">Logged in as Master of Mind (hello@kitto.com) {this.geo_loc}</ul>
+              <ul className="badge badge-success">Logged in as {this.state.username} with userid: {this.state.userid} {this.state.geo_loc}</ul>
               <ul className="list-group list-group-flush border-top-0">
               {this.renderfeed()}
 
